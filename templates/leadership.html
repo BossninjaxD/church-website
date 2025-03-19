@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}{{ content['leadership_title'] }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <h1 {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="leadership_hero_title"{% endif %}>
+        {{ content['leadership_hero_title'] }}
+    </h1>
+    <p {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="leadership_hero_text"{% endif %}>
+        {{ content['leadership_hero_text'] }}
+    </p>
+</section>
+
+<!-- Leadership Team -->
+<section class="connect">
+    <h2 {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="leadership_meet_title"{% endif %}>
+        {{ content['leadership_meet_title'] }}
+    </h2>
+    <p {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="leadership_meet_text"{% endif %}>
+        {{ content['leadership_meet_text'] }}
+    </p>
+</section>
+
+<!-- Leadership Grid -->
+<section class="events">
+    <h2 {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="leadership_staff_title"{% endif %}>
+        {{ content['leadership_staff_title'] }}
+    </h2>
+    <div class="staff-grid">
+        {% if staff %}
+            {% for member in staff %}
+            <a href="{{ url_for('contact') }}" class="staff-member-link">
+                <div class="staff-member">
+                    <img src="{{ url_for('static', filename='images/' + member['name']|lower|replace(' ', '-') + '-profile-pic.png') }}" 
+                         onerror="this.src='{{ url_for('static', filename='images/default-profile.png') }}'"
+                         alt="{{ member['name'] }}">
+                    <h3>{{ member['name'] }}</h3>
+                    <p><strong>{{ member['staff_role'] }}</strong></p>
+                </div>
+            </a>
+            {% endfor %}
+        {% else %}
+            <p>No staff members assigned yet.</p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Future Leadership Positions -->
+<section class="events">
+    <h2 {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="leadership_future_title"{% endif %}>
+        {{ content['leadership_future_title'] }}
+    </h2>
+    <div class="staff-grid">
+        {% set all_roles = ["Associate Pastor", "Worship Leader", "Youth Pastor", "Children’s Ministry Director"] %}
+        {% set assigned_roles = staff | map(attribute="staff_role") | list %}
+        
+        {% for role in all_roles if role not in assigned_roles %}
+        <div class="staff-member">
+            <h3>Coming Soon</h3>
+            <p><strong>{{ role }}</strong></p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Get Involved -->
+<section class="cta">
+    <h2 {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="leadership_connect_title"{% endif %}>
+        {{ content['leadership_connect_title'] }}
+    </h2>
+    <p {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="leadership_connect_text"{% endif %}>
+        {{ content['leadership_connect_text'] }}
+    </p>
+    <div class="button-group">
+        <a href="{{ url_for('contact') }}" class="btn btn-primary">{{ content['leadership_connect_btn1'] }}</a>
+        <a href="{{ url_for('ministries') }}" class="btn btn-secondary">{{ content['leadership_connect_btn2'] }}</a>
+    </div>
+</section>
+
+
+<!-- JavaScript (Only for Admins) -->
+{% if g.user and g.user['role'] == 'admin' %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll('.editable').forEach(element => {
+        element.addEventListener('blur', function () {
+            const section = this.getAttribute('data-section');
+            const newText = this.innerText;
+
+            fetch('/customize_content', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ [section]: newText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) alert("Error saving content: " + data.error);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+});
+</script>
+{% endif %}
+
+{% endblock %}

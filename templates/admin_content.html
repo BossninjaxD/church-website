@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Content Editor{% endblock %}
+
+{% block content %}
+<h1>Admin Content Editor</h1>
+
+{% for key, value in content.items() %}
+    <div>
+        <h3>{{ key }}</h3>
+        <textarea class="editable" data-section="{{ key }}">{{ value }}</textarea>
+    </div>
+{% endfor %}
+
+<button onclick="saveChanges()">Save Changes</button>
+
+<script>
+function saveChanges() {
+    document.querySelectorAll(".editable").forEach(element => {
+        const section = element.getAttribute("data-section");
+        const newText = element.value;
+
+        fetch("/update_content", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ section_name: section, content: newText })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Content updated successfully!");
+            } else {
+                alert("Error updating content: " + data.error);
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+}
+</script>
+
+{% endblock %}

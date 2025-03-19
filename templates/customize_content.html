@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Website Content</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header class="admin-header">
+        <h1>Edit Website Content</h1>
+        <nav>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">Back to Admin</a>
+        </nav>
+    </header>
+
+    <main class="admin-container">
+        <form action="{{ url_for('customize_content') }}" method="POST">
+            {% for key, value in content.items() %}
+                <label for="{{ key }}">{{ key.replace('_', ' ').title() }}</label>
+                <textarea name="{{ key }}">{{ value }}</textarea>
+                <br><br>
+            {% endfor %}
+            <button type="submit" class="btn btn-success">Save Changes</button>
+        </form>
+    </main>
+
+    <style>
+        .admin-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        textarea {
+            width: 100%;
+            height: 80px;
+            resize: vertical;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
+    </style>
+</body>
+</html>

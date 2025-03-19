@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Forums | Church</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    {% include 'header.html' %}
+
+    <main class="forum-container">
+        <h1>Church Community Forums</h1>
+        <p>Engage with your church family through discussions, worship song suggestions, and prayer requests.</p>
+
+        <!-- Categories Section -->
+        <section class="forum-categories">
+            <h2>Forum Categories</h2>
+            <div class="category-list">
+                <div class="category">
+                    <h3><a href="{{ url_for('prayer_request') }}">🙏 Prayer Requests</a></h3>
+                    <p>Submit and respond to prayer requests.</p>
+                </div>
+                <div class="category">
+                    <h3><a href="{{ url_for('forum_category', category='bible_study') }}">📖 Bible Study</a></h3>
+                    <p>Discuss Bible topics and share insights.</p>
+                </div>
+                <div class="category">
+                    <h3><a href="{{ url_for('forum_category', category='church_events') }}">🎉 Church Events</a></h3>
+                    <p>Talk about upcoming church events.</p>
+                </div>
+                <div class="category">
+                    <h3><a href="{{ url_for('forum_category', category='worship_songs') }}">🎶 Worship Song Suggestions</a></h3>
+                    <p>Recommend worship songs for our services.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Discussions -->
+        <section class="forum-topics">
+            <h2>Recent Discussions</h2>
+            {% if topics %}
+                {% for topic in topics %}
+                <div class="topic">
+                    <h3><a href="{{ url_for('forum_topic', topic_id=topic.id) }}">{{ topic.title }}</a></h3>
+                    <p>Started by {{ topic.author }} - {{ topic.created_at }}</p>
+                    <span class="replies">{{ topic.replies_count }} replies</span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No discussions yet. Start one below!</p>
+            {% endif %}
+        </section>
+
+        <!-- Create a New Discussion -->
+        {% if session.get('user_id') %}
+        <section class="new-topic">
+            <h2>Start a Discussion</h2>
+            <form action="{{ url_for('create_topic') }}" method="POST">
+                <label for="title">Title:</label>
+                <input type="text" id="title" name="title" required>
+
+                <label for="category">Category:</label>
+                <select id="category" name="category" required>
+                    <option value="prayer_requests">Prayer Requests</option>
+                    <option value="bible_study">Bible Study</option>
+                    <option value="church_events">Church Events</option>
+                    <option value="worship_songs">Worship Song Suggestions</option>
+                    <option value="sermons">Sermons</option>
+                    <option value="volunteer_opportunities">Volunteer Opportunities</option>
+                    <option value="testimonies">Testimonies</option>
+                    <option value="youth_ministry">Youth Ministry</option>
+                    <option value="missions">Missions</option>
+                    <option value="small_groups">Small Groups</option>
+                    <option value="community_outreach">Community Outreach</option>
+                    <option value="devotionals">Daily Devotionals</option>
+                    <option value="counseling">Counseling & Support</option>
+                    <option value="discipleship">Discipleship Programs</option>
+                    <option value="church_announcements">Church Announcements</option>
+                    <option value="baptisms">Baptisms</option>
+                    <option value="weddings">Weddings</option>
+                    <option value="funerals">Funeral Services</option>
+                    <option value="childrens_ministry">Children's Ministry</option>
+                    <option value="men_ministry">Men’s Ministry</option>
+                    <option value="women_ministry">Women’s Ministry</option>
+                    <option value="pastoral_care">Pastoral Care</option>
+                    <option value="christian_books">Christian Book Recommendations</option>
+                    <option value="faith_questions">Faith-Based Questions</option>
+                    <option value="spiritual_growth">Spiritual Growth Resources</option>
+                    <option value="financial_stewardship">Financial Stewardship & Giving</option>
+                    <option value="church_podcast">Church Podcasts</option>
+
+                </select>
+
+                <label for="content">Message:</label>
+                <textarea id="content" name="content" required></textarea>
+
+                <button type="submit" class="btn btn-primary">Post Discussion</button>
+            </form>
+        </section>
+        {% else %}
+        <p>You must <a href="{{ url_for('login') }}">log in</a> to start a discussion.</p>
+        {% endif %}
+    </main>
+
+    <!-- Footer -->
+    {% include 'footer.html' %}
+</body>
+</html>

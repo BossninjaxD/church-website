@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users | Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    
+    <script>
+        function confirmAction(action, userId) {
+            if (confirm(`Are you sure you want to ${action} this user?`)) {
+                window.location.href = `/${action}_user/${userId}`;
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const headers = document.querySelectorAll(".collapsible-header");
+            headers.forEach(header => {
+                header.addEventListener("click", function() {
+                    this.classList.toggle("active");
+                    const content = this.nextElementSibling;
+                    content.style.display = (content.style.display === "block") ? "none" : "block";
+                });
+            });
+
+            // Live Refresh for Prayer Requests & Messages
+            setInterval(updateUnreadCounts, 5000);
+        });
+
+        function updateUnreadCounts() {
+            fetch("{{ url_for('get_unread_counts') }}")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("unread-prayers").textContent = data.unread_prayers;
+                    document.getElementById("unread-messages").textContent = data.unread_messages;
+                })
+                .catch(error => console.error("Error fetching unread counts:", error));
+        }
+
+        function markPrayerAsAnswered(prayerId) {
+            fetch("{{ url_for('mark_prayer_read') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prayer_id: prayerId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const row = document.getElementById(`prayer-${prayerId}`);
+                    row.classList.add("read");
+                    document.getElementById("unread-prayers").textContent -= 1;
+                }
+            })
+            .catch(error => console.error("Error marking prayer as answered:", error));
+        }
+    </script>
+
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #f4f4f4; }
+        button { padding: 5px 10px; margin: 3px; border: none; cursor: pointer; }
+        .promote { background-color: green; color: white; }
+        .demote { background-color: orange; color: white; }
+        .delete { background-color: red; color: white; }
+        .edit { background-color: blue; color: white; }
+        form { margin-top: 20px; padding: 15px; background-color: #f9f9f9; border: 1px solid #ccc; width: 50%; }
+        input, select, textarea { width: 100%; padding: 8px; margin: 5px 0; }
+        .create-user-btn { background-color: #4CAF50; color: white; padding: 10px; border: none; cursor: pointer; width: 100%; }
+        .collapsible-header { cursor: pointer; background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd; font-weight: bold; font-size: 18px; }
+        .collapsible-content { display: none; padding: 10px; border: 1px solid #ccc; margin-top: 5px; }
+        .read { color: gray; }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Manage Users</h1>
+        <nav>
+            <a href="{{ url_for('admin') }}">Admin Dashboard</a>
+            <a href="{{ url_for('logout') }}" style="color: red;">Logout</a>
+        </nav>
+    </header>
+
+    <h2 class="collapsible-header">Users List</h2>
+    <div class="collapsible-content">
+        <table>
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.user_id }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>
+                        {% if user.user_id != session.get('user_id') %}
+                            {% if user.role == 'user' %}
+                                <button class="promote" onclick="confirmAction('promote', {{ user.user_id }})">Promote to Admin</button>
+                            {% elif user.role == 'admin' %}
+                                <button class="demote" onclick="confirmAction('demote', {{ user.user_id }})">Demote to User</button>
+                            {% endif %}
+                            <button class="edit" onclick="window.location.href='{{ url_for('edit_user', user_id=user.user_id) }}'">Edit</button>
+                            <button class="delete" onclick="confirmAction('delete', {{ user.user_id }})">Delete</button>
+                        {% else %}
+                            <em>Cannot modify your own role</em>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="collapsible-header">🏅 Current Staff Members</h2>
+    <div class="collapsible-content">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Staff Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for staff in staff_members %}
+                <tr>
+                    <td>{{ staff.name }}</td>
+                    <td>{{ staff.email }}</td>
+                    <td>{{ staff.staff_role if staff.staff_role else "Not Assigned" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <h2 class="collapsible-header">🔧 Assign Staff Roles</h2>
+    <div class="collapsible-content">
+        <form action="{{ url_for('update_staff_role') }}" method="POST">
+            <label for="user_id">Select User:</label>
+            <select id="user_id" name="user_id" required>
+                {% for user in users %}
+                    <option value="{{ user.user_id }}">{{ user.name }} ({{ user.email }})</option>
+                {% endfor %}
+            </select>
+    
+            <label for="staff_role">Assign Staff Role:</label>
+            <select id="staff_role" name="staff_role">
+                <option value="Pastor">Pastor</option>
+                <option value="Worship Leader">Worship Leader</option>
+                <option value="Youth Minister">Youth Minister</option>
+                <option value="Senior Pastor">Senior Pastor</option>
+                <option value="Event Coordinator">Event Coordinator</option>
+                <option value="Administrator">Administrator</option>
+                <option value="Community Outreach">Community Outreach</option>
+                <option value="Children's Ministry">Children's Ministry</option>
+                <option value="Prayer Team">Prayer Team</option>
+                <option value="">*Remove Role</option>
+            </select>
+    
+            <button type="submit" class="create-user-btn">Update Staff Role</button>
+        </form>
+    </div>
+    
+
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Ministries</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <!-- Header with Navigation -->
+    {% include 'header.html' %}
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Our Ministries</h1>
+        <p>Serving our church, our community, and beyond.</p>
+    </section>
+
+    <!-- Ministries Overview -->
+    <main class="events">
+        <p>Our church offers a variety of ministries for all ages and walks of life. Whether you’re looking to deepen your faith, serve the community, or find a place to connect, there’s a ministry for you.</p>
+
+        <div class="ministries-list">
+            <div class="ministry">
+                <h2>Worship Ministry</h2>
+                <p>Join our worship team in leading praise and worship during Sunday services.</p>
+            </div>
+
+            <div class="ministry">
+                <h2>Children’s Ministry</h2>
+                <p>Helping children grow in their faith through Sunday school, VBS, and fun activities.</p>
+            </div>
+
+            <div class="ministry">
+                <h2>Youth Ministry</h2>
+                <p>Guiding middle and high school students in faith, friendship, and service.</p>
+            </div>
+
+            <div class="ministry">
+                <h2>Community Outreach</h2>
+                <p>Serving the local community through food drives, support groups, and outreach events.</p>
+            </div>
+
+            <div class="ministry">
+                <h2>Life Groups</h2>
+                <p>Small groups meeting throughout the week to study God’s Word and support one another.</p>
+            </div>
+
+            <div class="ministry">
+                <h2>Prayer Ministry</h2>
+                <p>Join our team in praying for the needs of the church and our community.</p>
+            </div>
+
+            <div class="ministry">
+                <h2>Men’s & Women’s Ministries</h2>
+                <p>Fellowship and study groups specifically for men and women to grow in their faith.</p>
+            </div>
+
+            <div class="ministry">
+                <h2>Missions</h2>
+                <p>Supporting missionaries and global outreach efforts to spread the Gospel worldwide.</p>
+            </div>
+        </div>
+        
+        <!-- "Want to Get Involved?" Form -->
+        <div class="events">
+            <h2>Want to Get Involved?</h2>
+            <p>Fill out the form below, and we will connect you with the right ministry.</p>
+
+            {% if success %}
+                <div class="success-message">
+                    <p>Thank you for your interest! We will be in touch soon.</p>
+                </div>
+            {% endif %}
+
+            <form action="{{ url_for('ministries') }}" method="POST" class="contact-form">
+                <label for="name">Your Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">Your Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="ministry">Which Ministry Are You Interested In?</label>
+                <select id="ministry" name="ministry" required>
+                    <option value="worship">Worship Ministry</option>
+                    <option value="children">Children’s Ministry</option>
+                    <option value="youth">Youth Ministry</option>
+                    <option value="outreach">Community Outreach</option>
+                    <option value="life_groups">Life Groups</option>
+                    <option value="prayer">Prayer Ministry</option>
+                    <option value="mens_womens">Men’s & Women’s Ministries</option>
+                    <option value="missions">Missions</option>
+                    <option value="other">Other</option>
+                </select>
+
+                <button type="submit" class="btn btn-primary">Submit Interest</button>
+            </form>
+
+            <p><strong>Email:</strong> <a href="mailto:info.charnazchurch@gmail.com">info.charnazchurch@gmail.com</a></p>
+            <p><strong>Phone:</strong> <a href="tel:+12315475711">(231) 547-5711</a></p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    
+    {% extends "footer.html" %}
+</body>
+</html>

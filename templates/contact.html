@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Church</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    {% include 'header.html' %}
+
+    <!-- Contact Page Content -->
+    <div class="contact-container">
+        <!-- Left Side: Contact Info -->
+        <div class="contact-info">
+            <h2>Contact Us</h2>
+            <p><strong>Address:</strong> 12023 Waller Rd, Charlevoix, MI 49720</p>
+            <p><strong>Email:</strong> <a href="mailto:info.charnazchurch@gmail.com">info.charnazchurch@gmail.com</a></p>
+            <p><strong>Phone:</strong> <a href="tel:+12315475711">(231) 547-5711</a></p>
+            <p><strong>Office Hours:</strong> Mon-Fri 9AM - 5PM</p>
+    
+            <!-- Google Maps Link (No API Required) -->
+            <div class="map-container">
+                <a href="https://www.google.com/maps/place/12023+Waller+Rd,+Charlevoix,+MI+49720" target="_blank">
+                    <img src="{{ url_for('static', filename='images/google-maps-placeholder.png') }}" 
+                         alt="Google Maps Location" 
+                         class="map-image">
+                </a>
+            </div>
+            
+
+        </div>
+    
+        <!-- Right Side: Contact Form -->
+        <div class="contact-form">
+            <form action="{{ url_for('contact') }}" method="POST">
+                <label for="name">Your Name:</label>
+                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+    
+                <label for="email">Your Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+    
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" placeholder="Type your message here..." required></textarea>
+    
+                <button type="submit" class="btn">Send Message</button>
+            </form>
+        </div>
+    </div>
+    
+
+    <!-- Footer -->
+    
+    {% extends "footer.html" %}
+</body>
+</html>

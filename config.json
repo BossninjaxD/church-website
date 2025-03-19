@@ -1,0 +1,9 @@
+{
+    "SMTP_SERVER": "smtp.gmail.com",
+    "SMTP_PORT": 587,
+    "EMAIL_SENDER": "mknagle3022@gmail.com",
+    "EMAIL_PASSWORD": "xlcgqwfqaxcvhrsn",
+    "RECIEVE_EMAIL_ON_FORM_SUBMITTION": "FALSE",
+    "Hash_Password": "UnERio7N5regn4u0yVWxcFBxglL0RfQtB11VJ8A7Re",
+    "SECRET_KEY": "e68a04a150b142bae1b7ff5d0de0bb2dfe6f8a12d6c397dce8f238ef698a2bf1"
+}

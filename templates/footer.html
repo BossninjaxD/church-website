@@ -1,0 +1,43 @@
+<footer>
+    <div class="footer-container">
+        <!-- Church Logo -->
+        <div class="footer-section">
+            <img src="{{ url_for('static', filename='images/nazarene-banner-1080x635.png') }}" alt="Church Logo" width="150">
+        </div>
+
+        <!-- Contact Information -->
+        <div class="footer-section">
+            <h4>{{ content['footer_contact_title'] }}</h4>
+            <p>{{ content['footer_contact_address'] }}</p>
+            <p>Email: <a href="mailto:{{ content['footer_contact_email'] }}">{{ content['footer_contact_email'] }}</a></p>
+            <p>Phone: <a href="tel:{{ content['footer_contact_phone'] }}">{{ content['footer_contact_phone'] }}</a></p>
+            <p>{{ content['footer_contact_hours'] }}</p>
+        </div>
+
+        <!-- Service Times -->
+        <div class="footer-section">
+            <h4>{{ content['footer_service_title'] }}</h4>
+            <p>{{ content['footer_service_worship'] }}</p>
+            <p>{{ content['footer_service_school'] }}</p>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-section">
+            <h4>{{ content['footer_links_title'] }}</h4>
+            <ul>
+                <li><a href="{{ url_for('give') }}">{{ content['footer_links_give'] }}</a></li>
+                <li><a href="{{ url_for('events') }}">{{ content['footer_links_events'] }}</a></li>
+                <li><a href="{{ url_for('leadership') }}">{{ content['footer_links_prayer'] }}</a></li>
+                <li><a href="{{ url_for('media') }}">{{ content['footer_links_media'] }}</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Social Media -->
+    <div class="social-links">
+        <a href="{{ content['footer_social_facebook'] }}"><img src="{{ url_for('static', filename='images/facebook-icon.png') }}" alt="Facebook"></a>
+        <a href="{{ content['footer_social_instagram'] }}"><img src="{{ url_for('static', filename='images/instagram-icon.png') }}" alt="Instagram"></a>
+        <a href="{{ content['footer_social_twitter'] }}"><img src="{{ url_for('static', filename='images/x-icon.png') }}" alt="Twitter"></a>
+        <a href="{{ content['footer_social_youtube'] }}"><img src="{{ url_for('static', filename='images/youtube-icon.png') }}" alt="YouTube"></a>
+    </div>
+</footer>

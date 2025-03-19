@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customize Website</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header class="admin-header">
+        <h1>Customize Website</h1>
+        <nav>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">Back to Admin Dashboard</a>
+        </nav>
+    </header>
+    
+    <main class="admin-container">
+        <h2>Enable/Disable Features</h2>
+        <form action="{{ url_for('customize_website') }}" method="POST">
+            <label for="prayer_requests_status">Prayer Request System:</label>
+            <select name="prayer_requests_status">
+                <option value="active" {% if settings.enable_prayer_requests == "active" %}selected{% endif %}>Active</option>
+                <option value="disabled" {% if settings.enable_prayer_requests == "disabled" %}selected{% endif %}>Disabled</option>
+            </select>
+            <br>
+            <label for="newsletter_status">Newsletter Subscription:</label>
+            <select name="newsletter_status">
+                <option value="active" {% if settings.enable_newsletter == "active" %}selected{% endif %}>Active</option>
+                <option value="disabled" {% if settings.enable_newsletter == "disabled" %}selected{% endif %}>Disabled</option>
+            </select>
+            <br>
+            <button type="submit" class="btn btn-success">Save Feature Settings</button>
+        </form>
+
+        <h2>Enable/Disable Pages</h2>
+        <form action="{{ url_for('customize_website') }}" method="POST">
+            <label for="home_status">Home Page:</label>
+            <select name="home_status">
+                <option value="active" {% if settings.enable_home == "active" %}selected{% endif %}>Active</option>
+                <option value="disabled" {% if settings.enable_home == "disabled" %}selected{% endif %}>Disabled</option>
+            </select>
+            <br>
+            <label for="about_status">About Page:</label>
+            <select name="about_status">
+                <option value="active" {% if settings.enable_about == "active" %}selected{% endif %}>Active</option>
+                <option value="disabled" {% if settings.enable_about == "disabled" %}selected{% endif %}>Disabled</option>
+            </select>
+            <br>
+            <label for="watch_status">Watch Page:</label>
+            <select name="watch_status">
+                <option value="active" {% if settings.enable_watch == "active" %}selected{% endif %}>Active</option>
+                <option value="disabled" {% if settings.enable_watch == "disabled" %}selected{% endif %}>Disabled</option>
+            </select>
+            <br>
+            <label for="ministries_status">Ministries Page:</label>
+            <select name="ministries_status">
+                <option value="active" {% if settings.enable_ministries == "active" %}selected{% endif %}>Active</option>
+                <option value="disabled" {% if settings.enable_ministries == "disabled" %}selected{% endif %}>Disabled</option>
+            </select>
+            <br>
+            <label for="give_status">Give Page:</label>
+            <select name="give_status">
+                <option value="active" {% if settings.enable_give == "active" %}selected{% endif %}>Active</option>
+                <option value="disabled" {% if settings.enable_give == "disabled" %}selected{% endif %}>Disabled</option>
+            </select>
+            <br>
+            <label for="contact_status">Contact Page:</label>
+            <select name="contact_status">
+                <option value="active" {% if settings.enable_contact == "active" %}selected{% endif %}>Active</option>
+                <option value="disabled" {% if settings.enable_contact == "disabled" %}selected{% endif %}>Disabled</option>
+            </select>
+            <br>
+            <button type="submit" class="btn btn-success">Save Page Settings</button>
+        </form>
+
+        <h3>Notification Settings</h3>
+
+        <!-- Form to select which roles get prayer request emails -->
+        <form action="{{ url_for('customize_website') }}" method="POST">
+            <label for="prayer_roles">Select Roles to Receive Prayer Request Emails: (Select Multi before hitting savve)</label>
+            <select id="prayer_roles" name="prayer_roles" multiple>
+                {% for role in ["Pastor", "Worship Leader", "Youth Minister", "Senior Pastor", "Event Coordinator", "Administrator", "Community Outreach", "Children's Ministry", "Prayer Team"] %}
+                    <option value="{{ role }}" {% if role in prayer_roles %}selected{% endif %}>{{ role }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">Save Settings</button>
+        </form>
+
+        <!-- Display Current Roles -->
+        <h4>Current Roles Receiving Prayer Requests:</h4>
+        <ul>
+            {% if prayer_roles %}
+                {% for role in prayer_roles %}
+                    <li>{{ role }} 
+                        <a href="{{ url_for('remove_notification_role', role=role) }}" class="btn btn-danger btn-sm">Remove</a>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li>No roles assigned yet.</li>
+            {% endif %}
+        </ul>
+
+    </main>
+    
+    <style>
+        .admin-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            text-decoration: none;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+    </style>
+</body>
+</html>

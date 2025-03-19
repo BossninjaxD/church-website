@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Prayer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            text-align: center;
+            color: white;
+            padding: 80px 20px;
+            background: url("{{ url_for('static', filename='images/generic-stock-photo.png') }}") center/cover no-repeat;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            display: block;
+        }
+
+        .form-group input, 
+        .form-group textarea, 
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-group input {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Navigation -->
+    {% include 'header.html' %}
+
+    <!-- Hero Section with Background Image -->
+    <section class="hero">
+        <h1>Request a Prayer</h1>
+        <p>We are here to pray for you. Submit your prayer request below.</p>
+    </section>
+
+    <!-- Prayer Request Form -->
+    <main class="container">
+        {% if success %}
+            <div class="success-message">
+                Thank you for your prayer request. Our team will be praying for you.
+            </div>
+        {% endif %}
+
+        <form action="{{ url_for('prayer_request') }}" method="POST">
+            <div class="form-group">
+                <label for="name">Your Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Your Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="prayer">Your Prayer Request:</label>
+                <textarea id="prayer" name="prayer" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="urgency">Urgency Level:</label>
+                <select id="urgency" name="urgency">
+                    <option value="normal">Normal</option>
+                    <option value="urgent">Urgent</option>
+                    <option value="critical">Critical</option>
+                </select>
+            </div>
+
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="private" name="private">
+                <label for="private">Keep this request private (only seen by prayer team)</label>
+            </div>
+
+            <button type="submit" class="btn-primary">Submit Prayer Request</button>
+        </form>
+    </main>
+
+    <!-- Footer -->
+    {% include "footer.html" %}
+
+</body>
+</html>

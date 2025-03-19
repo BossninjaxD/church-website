@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ content['about_title'] }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script defer src="{{ url_for('static', filename='editable.js') }}"></script>
+</head>
+<body>
+
+    {% include 'header.html' %}
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1 contenteditable="{{ 'true' if g.user and g.user['role'] == 'admin' else 'false' }}" 
+            data-section="about_hero_title">
+            {{ content['about_hero_title'] }}
+        </h1>
+        <p contenteditable="{{ 'true' if g.user and g.user['role'] == 'admin' else 'false' }}" 
+           data-section="about_hero_text">
+            {{ content['about_hero_text'] }}
+        </p>
+    </section>
+
+    <!-- Church Mission -->
+    <section class="connect">
+        <h2 contenteditable="{{ 'true' if g.user and g.user['role'] == 'admin' else 'false' }}" 
+            data-section="about_mission_title">
+            {{ content['about_mission_title'] }}
+        </h2>
+        <p contenteditable="{{ 'true' if g.user and g.user['role'] == 'admin' else 'false' }}" 
+           data-section="about_mission_text1">
+            {{ content['about_mission_text1'] }}
+        </p>
+        <p contenteditable="{{ 'true' if g.user and g.user['role'] == 'admin' else 'false' }}" 
+           data-section="about_mission_text2">
+            {{ content['about_mission_text2'] }}
+        </p>
+    </section>
+
+    <!-- Core Beliefs -->
+    <section class="events">
+        <h2 contenteditable="{{ 'true' if g.user and g.user['role'] == 'admin' else 'false' }}" 
+            data-section="about_beliefs_title">
+            {{ content['about_beliefs_title'] }}
+        </h2>
+        <p contenteditable="{{ 'true' if g.user and g.user['role'] == 'admin' else 'false' }}" 
+           data-section="about_beliefs_intro">
+            {{ content['about_beliefs_intro'] }}
+        </p>
+        <ul>
+            <li><strong contenteditable="{{ 'true' if g.user and g.user['role'] == 'admin' else 'false' }}" 
+                data-section="about_belief1_title">
+                {{ content['about_belief1_title'] }}</strong>: 
+                <span contenteditable="{{ 'true' if g.user and g.user['role'] == 'admin' else 'false' }}" 
+                      data-section="about_belief1_text">
+                    {{ content['about_belief1_text'] }}
+                </span>
+            </li>
+            <li><strong data-section="about_belief2_title">{{ content['about_belief2_title'] }}</strong>: 
+                <span contenteditable="{{ 'true' if g.user and g.user['role'] == 'admin' else 'false' }}" 
+                      data-section="about_belief2_text">
+                    {{ content['about_belief2_text'] }}
+                </span>
+            </li>
+            <li><strong data-section="about_belief3_title">{{ content['about_belief3_title'] }}</strong>: 
+                <span contenteditable="{{ 'true' if g.user and g.user['role'] == 'admin' else 'false' }}" 
+                      data-section="about_belief3_text">
+                    {{ content['about_belief3_text'] }}
+                </span>
+            </li>
+            <li><strong data-section="about_belief4_title">{{ content['about_belief4_title'] }}</strong>: 
+                <span contenteditable="{{ 'true' if g.user and g.user['role'] == 'admin' else 'false' }}" 
+                      data-section="about_belief4_text">
+                    {{ content['about_belief4_text'] }}
+                </span>
+            </li>
+        </ul>
+    </section>
+
+    <!-- Leadership -->
+    <section class="connect">
+        <h2 contenteditable="{{ 'true' if g.user and g.user['role'] == 'admin' else 'false' }}" 
+            data-section="about_leadership_title">
+            {{ content['about_leadership_title'] }}
+        </h2>
+        <p contenteditable="{{ 'true' if g.user and g.user['role'] == 'admin' else 'false' }}" 
+           data-section="about_leadership_text">
+            {{ content['about_leadership_text'] }}
+        </p>
+        <div class="button-group">
+            <a href="{{ url_for('leadership') }}" class="btn btn-primary">{{ content['about_leadership_button'] }}</a>
+        </div>
+    </section>
+
+    {% include "footer.html" %}
+
+</body>
+</html>

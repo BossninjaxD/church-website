@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .dashboard-container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .table th, .table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #f4f4f4;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            display: block;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .logout {
+            color: red;
+            font-weight: bold;
+        }
+
+        .collapsible {
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .collapsible:hover {
+            background-color: #0056b3;
+        }
+
+        .content {
+            padding: 10px;
+            display: none;
+            overflow: hidden;
+            background-color: #f9f9f9;
+            border-left: 3px solid #007BFF;
+            margin-bottom: 10px;
+        }
+
+        /* Read and Unread Prayer Styles */
+        .unread {
+            font-weight: bold;
+        }
+        .read {
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+
+        <!-- Header Navigation -->
+        <header style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #f8f9fa; border-bottom: 1px solid #ddd;">
+            <h2>Welcome, {{ user["name"] }}!</h2>
+            <nav style="display: flex; gap: 20px;">
+                <a href="{{ url_for('home') }}" style="text-decoration: none; font-weight: bold; color: #007bff;">Homepage</a>
+                <a href="{{ url_for('logout') }}" style="text-decoration: none; font-weight: bold; color: red;">Logout</a>
+            </nav>
+        </header>
+
+        <!-- Account Info -->
+        <div class="card">
+            <h2>Your Account Information</h2>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Role:</strong> {{ user.role }}</p>
+        </div>
+
+        <!-- Donation Summary -->
+        <div class="card">
+            <h2>Donation Summary</h2>
+            <p><strong>Total Given:</strong> ${{ total_given }}</p>
+            <p><strong>Number of Donations:</strong> {{ total_donations }}</p>
+        </div>
+
+        <!-- Giving History -->
+        <button class="collapsible">📜 Your Giving History</button>
+        <div class="content">
+            <div class="card">
+                {% if donations %}
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Amount</th>
+                                <th>Donation Type</th>
+                                <th>Date</th>
+                                <th>Recurring?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for donation in donations %}
+                            <tr>
+                                <td>${{ donation.amount }}</td>
+                                <td>{{ donation.donation_type }}</td>
+                                <td>{{ donation.date_given }}</td>
+                                <td>{{ "Yes" if donation.donation_type == "recurring" else "No" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>You have not made any donations yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Prayer Requests -->
+        <!-- Prayer Requests -->
+        <button class="collapsible">
+            Your Prayer Requests ({{ total_prayers }})
+        </button>
+        <div class="content">
+            <div class="card">
+                {% if prayers %}
+                    <ul>
+                        {% for prayer in prayers %}  <!-- ✅ Remove duplicate loop -->
+                            <li>
+                                <strong>{{ prayer["submitted_at"] }}</strong>: 
+                                <span>{{ prayer["prayer_request"] }}</span>
+                                <form action="{{ url_for('delete_user_prayer') }}" method="POST" style="display:inline;">
+                                    <input type="hidden" name="prayer_id" value="{{ prayer['prayer_id'] }}">
+                                    <button type="submit" class="delete-btn">Delete</button>
+                                </form>
+                                
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No prayer requests submitted yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+
+        <style>
+            .delete-btn {
+                background-color: red;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                cursor: pointer;
+                border-radius: 5px;
+                margin-left: 10px;
+            }
+
+            .delete-btn:hover {
+                background-color: darkred;
+            }
+        </style>
+
+
+        <!-- Prayer Request Submission -->
+        <button class="collapsible">➕ Submit a Prayer Request</button>
+        <div class="content">
+            <div class="card">
+                <form action="{{ url_for('submit_prayer') }}" method="POST">
+                    <label for="prayer_text">Enter Your Prayer Request:</label>
+                    <textarea id="prayer_text" name="prayer_request" rows="3" required></textarea>
+                    <button type="submit" class="btn">Submit Prayer</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- JavaScript for Collapsible Sections -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // ✅ Fix collapsible sections
+                var coll = document.querySelectorAll(".collapsible");
+                coll.forEach(button => {
+                    button.addEventListener("click", function() {
+                        this.classList.toggle("active");
+                        var content = this.nextElementSibling;
+                        if (content.style.display === "block") {
+                            content.style.display = "none";
+                        } else {
+                            content.style.display = "block";
+                        }
+                    });
+                });
+        
+                // ✅ Fix delete button functionality
+                var deleteButtons = document.querySelectorAll(".delete-btn");
+                deleteButtons.forEach(button => {
+                    button.addEventListener("click", function(event) {
+                        event.preventDefault();  // Prevents multiple rapid clicks
+                        var form = this.closest("form");
+                        
+                        fetch(form.action, {
+                            method: "POST",
+                            body: new FormData(form)
+                        }).then(response => {
+                            if (response.redirected) {
+                                window.location.href = response.url; // Ensures proper page reload
+                            }
+                        });
+                    });
+                });
+            });
+        </script>
+        
+        
+
+    </div>
+</body>
+</html>

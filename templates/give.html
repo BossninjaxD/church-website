@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Give</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        function toggleRecurring() {
+            const recurringOptions = document.getElementById("recurring-options");
+            const donationType = document.querySelector('input[name="donation_type"]:checked').value;
+            if (donationType === "recurring") {
+                recurringOptions.style.display = "block";
+            } else {
+                recurringOptions.style.display = "none";
+            }
+        }
+
+        function updateSummary() {
+            const amount = document.querySelector('input[name="amount"]:checked') ? 
+                document.querySelector('input[name="amount"]:checked').value : 
+                document.getElementById("custom-amount").value;
+
+            const donationType = document.querySelector('input[name="donation_type"]:checked').value;
+            const frequency = donationType === "recurring" ? document.getElementById("recurring_frequency").value : "One-Time";
+
+            document.getElementById("summary-amount").innerText = `$${amount}`;
+            document.getElementById("summary-frequency").innerText = frequency;
+        }
+    </script>
+</head>
+<body>
+    <!-- Header with Navigation -->
+    {% include 'header.html' %}
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Support Our Church</h1>
+        <p>Your generosity makes a difference.</p>
+        <p>[This site is still under construction]</p>
+    </section>
+
+    <!-- Giving Form -->
+    <main class="events">
+        <h2>Make a Donation</h2>
+        <form action="{{ url_for('give') }}" method="POST" class="contact-form">
+            
+            <!-- Choose Amount -->
+            <label>Select Donation Amount:</label>
+            <div class="amount-options">
+                <input type="radio" id="amount-25" name="amount" value="25" onclick="updateSummary()">
+                <label for="amount-25">$25</label>
+                
+                <input type="radio" id="amount-50" name="amount" value="50" onclick="updateSummary()">
+                <label for="amount-50">$50</label>
+                
+                <input type="radio" id="amount-100" name="amount" value="100" onclick="updateSummary()">
+                <label for="amount-100">$100</label>
+
+                <input type="radio" id="amount-custom" name="amount" value="" onclick="updateSummary()">
+                <label for="amount-custom">Custom: $</label>
+                <input type="number" id="custom-amount" name="custom_amount" placeholder="Enter amount" oninput="updateSummary()">
+            </div>
+
+            <!-- One-Time or Recurring -->
+            <label>Select Donation Type:</label>
+            <div class="donation-type">
+                <input type="radio" id="one-time" name="donation_type" value="one-time" checked onclick="toggleRecurring(); updateSummary();">
+                <label for="one-time">One-Time</label>
+
+                <input type="radio" id="recurring" name="donation_type" value="recurring" onclick="toggleRecurring(); updateSummary();">
+                <label for="recurring">Recurring</label>
+            </div>
+
+            <!-- Recurring Options -->
+            <div id="recurring-options" style="display: none;">
+                <label for="recurring_frequency">Recurring Frequency:</label>
+                <select id="recurring_frequency" name="recurring_frequency" onchange="updateSummary()">
+                    <option value="Weekly">Weekly</option>
+                    <option value="Monthly">Monthly</option>
+                    <option value="Yearly">Yearly</option>
+                </select>
+            </div>
+
+            <!-- Payment Method -->
+            <label for="payment">Choose Payment Method:</label>
+            <select id="payment" name="payment">
+                <option value="credit_card">Credit/Debit Card</option>
+                <option value="bank_transfer">Bank Transfer</option>
+                <option value="paypal">PayPal</option>
+            </select>
+
+            <!-- Donation Summary -->
+            <div class="donation-summary">
+                <h3>Donation Summary</h3>
+                <p><strong>Amount:</strong> <span id="summary-amount">$0</span></p>
+                <p><strong>Frequency:</strong> <span id="summary-frequency">One-Time</span></p>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Donation</button>
+        </form>
+    </main>
+
+    <!-- Footer -->
+    
+    {% extends "footer.html" %}
+</body>
+</html>

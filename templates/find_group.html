@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}{{ content['find_group_title'] }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1 {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="find_group_hero_title"{% endif %}>
+                {{ content['find_group_hero_title'] }}
+            </h1>
+            <p {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="find_group_hero_text"{% endif %}>
+                {{ content['find_group_hero_text'] }}
+            </p>
+        </section>
+
+        <!-- Available Groups -->
+        <section class="section">
+            <h2 {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="find_group_available_title"{% endif %}>
+                {{ content['find_group_available_title'] }}
+            </h2>
+            <div class="group-list">
+                {% for group in groups %}
+                <div class="group-card">
+                    <h3 {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="group_name_{{ group.id }}"{% endif %}>
+                        {{ group.name }}
+                    </h3>
+                    <p {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="group_desc_{{ group.id }}"{% endif %}>
+                        {{ group.description }}
+                    </p>
+                    <p><strong>Location:</strong> 
+                        <span {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="group_location_{{ group.id }}"{% endif %}>
+                            {{ group.location }}
+                        </span>
+                    </p>
+                    <p><strong>Leader:</strong> 
+                        <span {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="group_leader_{{ group.id }}"{% endif %}>
+                            {{ group.leader }}
+                        </span>
+                    </p>
+                    <a href="{{ url_for('contact', group=group.name) }}" class="btn">Request Info</a>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="section">
+            <h2 {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="find_group_testimonial_title"{% endif %}>
+                {{ content['find_group_testimonial_title'] }}
+            </h2>
+            <div class="testimonial">
+                <p {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="find_group_testimonial_1"{% endif %}>
+                    {{ content['find_group_testimonial_1'] }}
+                </p>
+            </div>
+            <div class="testimonial">
+                <p {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="find_group_testimonial_2"{% endif %}>
+                    {{ content['find_group_testimonial_2'] }}
+                </p>
+            </div>
+        </section>
+
+        <!-- Sign-Up Form -->
+        <section class="section">
+            <h2 {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="find_group_signup_title"{% endif %}>
+                {{ content['find_group_signup_title'] }}
+            </h2>
+            <form action="{{ url_for('submit_message') }}" method="POST">
+                <input type="hidden" name="message_type" value="group_signup">
+            
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" name="name" placeholder="Enter your name" required>
+            
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            
+                <label for="group">Select a Group:</label>
+                <select id="group" name="group_selected" required>
+                    <option value="Bible Study">Bible Study</option>
+                    <option value="Young Adults">Young Adults</option>
+                    <option value="Men's Group">Men's Group</option>
+                    <option value="Women's Fellowship">Women's Fellowship</option>
+                </select>
+            
+                <button type="submit" class="btn btn-primary">Request Join Group</button>
+            </form>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="cta">
+            <h2 {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="find_group_cta_title"{% endif %}>
+                {{ content['find_group_cta_title'] }}
+            </h2>
+            <p {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="find_group_cta_text"{% endif %}>
+                {{ content['find_group_cta_text'] }}
+            </p>
+            <a href="{{ url_for('contact') }}" class="btn">Contact Us</a>
+        </section>
+
+    </div>
+
+    <!-- JavaScript (Only for Admins) -->
+    {% if g.user and g.user['role'] == 'admin' %}
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.editable').forEach(element => {
+            element.addEventListener('blur', function () {
+                const section = this.getAttribute('data-section');
+                const newText = this.innerText;
+
+                fetch('/customize_content', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ [section]: newText })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) alert("Error saving content: " + data.error);
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+    </script>
+    {% endif %}
+
+{% endblock %}

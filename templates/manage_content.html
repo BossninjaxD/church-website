@@ -1,0 +1,9 @@
+_<h1>Manage Website Content</h1>
+<form method="POST">
+    {% for section in content %}
+        <label for="{{ section['section_name'] }}">{{ section['section_name'] }}</label>
+        <textarea name="content">{{ section['content'] }}</textarea>
+        <input type="hidden" name="section_name" value="{{ section['section_name'] }}">
+        <button type="submit">Save</button>
+    {% endfor %}
+</form>

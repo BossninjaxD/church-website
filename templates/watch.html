@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Live</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        // Function to update countdown timer for next Sunday at 10AM
+        function updateCountdown() {
+            const now = new Date();
+            let nextSunday = new Date();
+            nextSunday.setDate(now.getDate() + (7 - now.getDay()) % 7); // Set to next Sunday
+            nextSunday.setHours(10, 0, 0, 0); // Set time to 10:00 AM
+
+            const timeDiff = nextSunday - now;
+
+            if (timeDiff > 0) {
+                const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+                document.getElementById("countdown").innerHTML =
+                    `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            } else {
+                document.getElementById("countdown").innerHTML = "Live Now!";
+            }
+        }
+
+        // Update the countdown every second
+        setInterval(updateCountdown, 1000);
+        window.onload = updateCountdown;
+
+        // Save sermon notes locally
+        function saveNotes() {
+            const notes = document.getElementById("sermon-notes").value;
+            localStorage.setItem("sermonNotes", notes);
+        }
+
+        // Load saved notes
+        function loadNotes() {
+            const savedNotes = localStorage.getItem("sermonNotes");
+            if (savedNotes) {
+                document.getElementById("sermon-notes").value = savedNotes;
+            }
+        }
+
+        window.onload = function() {
+            updateCountdown();
+            loadNotes();
+        };
+    </script>
+</head>
+<body>
+    <!-- Header with Navigation -->
+    {% include 'header.html' %}
+
+    <!-- Live Stream Section -->
+    <section class="hero">
+        <h1>Watch Live</h1>
+        <p>Join us for our Sunday service at 10:00 AM.</p>
+        <h3>Next Live Event: <span id="countdown"></span></h3>
+    </section>
+
+    <main class="events">
+        <!-- Live Stream Video -->
+        <section class="live-stream">
+            <h2>Live Sermon</h2>
+            <div class="video-container">
+                <iframe width="100%" height="500" src="https://www.youtube.com/embed/live_stream?channel=YOUR_CHANNEL_ID" 
+                        title="Live Sermon" allowfullscreen></iframe>
+            </div>
+        </section>
+
+        <!-- Sermon Notes Section -->
+        <section class="sermon-notes">
+            <h2>Sermon Notes</h2>
+            <textarea id="sermon-notes" placeholder="Write your notes here..." rows="8"></textarea>
+            <button class="btn btn-primary" onclick="saveNotes()">Save Notes</button>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    
+    {% extends "footer.html" %}
+</body>
+</html>

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}{{ content['home_title'] }}{% endblock %}
+
+{% block content %}
+<!-- Landing Section -->
+<section class="hero">
+    <h1 {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="home_welcome"{% endif %}>
+        {{ content['home_welcome'] }}
+    </h1>
+    <p {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="home_intro"{% endif %}>
+        {{ content['home_intro'] }}
+    </p>
+    <div class="button-group">
+        <a href="{{ url_for('about') }}" class="btn btn-primary btn-border">{{ content['home_btn_about'] }}</a>
+        <a href="{{ url_for('find_group') }}" class="btn btn-secondary">{{ content['home_btn_find_group'] }}</a>
+        <a href="{{ url_for('prayer_request') }}" class="btn btn-success">{{ content['home_btn_prayer'] }}</a>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta">
+    <h2 {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="home_cta_title"{% endif %}>
+        {{ content['home_cta_title'] }}
+    </h2>
+    <p {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="home_cta_text"{% endif %}>
+        {{ content['home_cta_text'] }}
+    </p>
+    <div class="button-group">
+        <a href="{{ content['home_cta_map_link'] }}" target="_blank" class="btn btn-primary btn-border">{{ content['home_cta_map_text'] }}</a>
+        <a href="{{ url_for('watch') }}" class="btn btn-primary btn-border">{{ content['home_cta_watch'] }}</a>
+        <a href="{{ url_for('give') }}" class="btn btn-primary btn-border">{{ content['home_cta_give'] }}</a>
+    </div>
+</section>
+
+<!-- Connect Section -->
+<section class="connect">
+    <h2 {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="home_connect_title"{% endif %}>
+        {{ content['home_connect_title'] }}
+    </h2>
+    <p {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="home_connect_intro"{% endif %}>
+        {{ content['home_connect_intro'] }}
+    </p>
+    <p {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="home_connect_message"{% endif %}>
+        {{ content['home_connect_message'] }}
+    </p>
+    <div class="contact-info">
+        <p>Email: <span {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="home_contact_email"{% endif %}>
+            {{ content['home_contact_email'] }}
+        </span></p>
+        <p>Phone: <span {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="home_contact_phone"{% endif %}>
+            {{ content['home_contact_phone'] }}
+        </span></p>
+        <p>Location: <span {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="home_contact_location"{% endif %}>
+            {{ content['home_contact_location'] }}
+        </span></p>
+    </div>
+    <div class="button-group">
+        <a href="{{ url_for('ministries') }}" class="btn">{{ content['home_connect_community'] }}</a>
+        <a href="{{ url_for('contact') }}" class="btn">{{ content['home_connect_pastor'] }}</a>
+    </div>
+</section>
+
+<!-- Upcoming Events -->
+<section class="events">
+    <h2 {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="home_upcoming_title"{% endif %}>
+        {{ content['home_upcoming_title'] }}
+    </h2>
+    <div class="event-list">
+        <div class="event">
+            <h3 {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="home_event1_title"{% endif %}>
+                {{ content['home_event1_title'] }}
+            </h3>
+            <p {% if g.user and g.user['role'] == 'admin' %}contenteditable="true" class="editable" data-section="home_event1_text"{% endif %}>
+                {{ content['home_event1_text'] }}
+            </p>
+            <a href="{{ content['home_event1_calendar'] }}" target="_blank" class="btn btn-primary">{{ content['home_event1_button'] }}</a>
+        </div>
+    </div>
+    <a href="{{ url_for('events') }}" class="btn">{{ content['home_view_all_events'] }}</a>
+</section>
+
+<!-- JavaScript -->
+{% if g.user and g.user['role'] == 'admin' %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll('.editable').forEach(element => {
+        element.addEventListener('blur', function () {
+            const section = this.getAttribute('data-section');
+            const newText = this.innerText;
+
+            fetch('/customize_content', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ [section]: newText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) alert("Error saving content: " + data.error);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+});
+</script>
+{% endif %}
+{% endblock %}

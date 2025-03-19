@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ topic.title }} | Church Forum</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+
+    <!-- Include Header -->
+    {% include 'header.html' %}
+
+    <main class="forum-container">
+        <!-- Topic Details -->
+        <section class="discussion">
+            <h1>{{ topic.title }}</h1>
+            <p><strong>Category:</strong> {{ topic.category | replace("_", " ") | title }}</p>
+            <p><strong>Posted by:</strong> {{ topic.author }} on {{ topic.created_at }}</p>
+            <p class="content">{{ topic.content }}</p>
+        </section>
+
+        <!-- Replies Section -->
+        <section class="replies">
+            <h2>Replies ({{ replies|length }})</h2>
+            {% if replies %}
+                {% for reply in replies %}
+                <div class="reply">
+                    <p><strong>{{ reply.author }}</strong> ({{ reply.created_at }})</p>
+                    <p>{{ reply.content }}</p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No replies yet. Be the first to respond!</p>
+            {% endif %}
+        </section>
+
+        <!-- Reply Form -->
+        {% if session.get('user_id') %}
+        <section class="reply-form">
+            <h2>Post a Reply</h2>
+            <form action="{{ url_for('post_reply', topic_id=topic.id) }}" method="POST">
+                <label for="reply-content">Your Reply:</label>
+                <textarea id="reply-content" name="content" required></textarea>
+                <button type="submit" class="btn btn-success">Reply</button>
+            </form>
+        </section>
+        {% else %}
+        <p>You must <a href="{{ url_for('login') }}">log in</a> to reply.</p>
+        {% endif %}
+    </main>
+
+    <!-- Include Footer -->
+    {% include 'footer.html' %}
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Church Events</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <!-- Header with Navigation -->
+    {% include 'header.html' %}
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Church Events</h1>
+        <p>Join us for fellowship, worship, and community gatherings.</p>
+    </section>
+
+    <!-- Weekly Schedule -->
+    <section class="events">
+        <h2>Weekly Schedule</h2>
+        <div class="event-list">
+            <div class="event">
+                <h3>Sunday Worship</h3>
+                <p>Join us every Sunday at 10AM for worship and fellowship.</p>
+            </div>
+            <div class="event">
+                <h3>Tuesday: Ladies' Tea</h3>
+                <p>Gather for fellowship and tea at 10:00 AM.</p>
+            </div>
+            <div class="event">
+                <h3>Wednesday: Prayer & Praise</h3>
+                <p>Join us for an evening of prayer and worship at 6:30 PM.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upcoming Events -->
+    <section class="events">
+        <h2>Upcoming Events</h2>
+        <div class="event-list">
+            {% if events %}
+                {% for event in events %}
+                <div class="event">
+                    <h1>{{ event.event_name }}</h1>
+                    <p>
+                        <strong>Date:</strong> {{ event.event_date }} | 
+                        <strong>Time:</strong> {{ event.event_time }}
+                    </p>
+                    <p><strong>Location:</strong> {{ event.location if event.location else "TBD" }}</p>
+                    <p>{{ event.description }}</p>
+
+                    <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ event.event_name }}&dates={{ event.google_calendar_time }}&location={{ event.location|urlencode }}"
+                    target="_blank" class="btn btn-primary">
+                        Add to Calendar
+                    </a>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No upcoming events at this time.</p>
+            {% endif %}
+        </div>
+    </section>
+
+
+
+
+
+
+    <!-- Suggest an Event / RSVP -->
+    <section class="events">
+        <h2>Suggest an Event or RSVP</h2>
+        <p>Want to RSVP for an event or suggest a new one? Fill out the form below.</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('events') }}" method="POST" class="contact-form">
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Your Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="event_action">Are you RSVPing or Suggesting an Event?</label>
+            <select id="event_action" name="event_action" required>
+                <option value="rsvp">RSVP to an Event</option>
+                <option value="suggest">Suggest a New Event</option>
+            </select>
+
+            <label for="event_name">Event Name:</label>
+            <input type="text" id="event_name" name="event_name" placeholder="Enter event name">
+
+            <label for="event_date">Event Date (If suggesting):</label>
+            <input type="date" id="event_date" name="event_date">
+
+            <label for="event_details">Additional Details:</label>
+            <textarea id="event_details" name="event_details" rows="3" placeholder="Enter any additional details"></textarea>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    {% include "footer.html" %}
+</body>
+</html>
