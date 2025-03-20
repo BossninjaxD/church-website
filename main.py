@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, g, jsonify
+from flask import Flask, render_template, request, Blueprint, redirect, url_for, session, flash, g, jsonify
 from email.message import EmailMessage
 import sqlite3, smtplib, json
 from datetime import datetime
@@ -7,16 +7,17 @@ from functools import wraps
 from werkzeug.security import generate_password_hash
 from flask_session import Session
 from admin_routes import admin_bp
+
 import os
 
-
-#initaitlize Flask & Bcrypt
+#initaitlize Flask & Bcryp
 main = Flask(__name__)
+
 bcrypt = Bcrypt(main)
 
 
-# Register admin routes
-main.register_blueprint(admin_bp)
+# Register the blueprints
+main.register_blueprint(admin_bp) # Register admin routes
 
 
 # Configure session settings
@@ -1703,5 +1704,5 @@ def post_reply(topic_id):
 
 
 if __name__ == '__main__':
-    main.run(debug=True, port=5050)
+    main.run(host='0.0.0.0', debug=True, port=5000)
 
